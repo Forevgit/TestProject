@@ -1,0 +1,51 @@
+# Віртуальні середовища
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Python файли
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.env
+
+# Django файли
+db.sqlite3
+media/
+
+# Логи та файли відладки
+*.log
+*.pot
+*.py[cod]
+*.swp
+*~
+.#*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Конфігураційні файли IDE
+.vscode/
+.idea/
+
+# Секретні ключі та конфігураційні файли
+.env
+*.env
+
+# Файли міграцій Django
+*/migrations/__pycache__/
+
+
+# Node.js файли (якщо використовуєте Node.js для фронтенду)
+node_modules/
+npm-debug.log
+
+# MacOS файли
+.DS_Store
