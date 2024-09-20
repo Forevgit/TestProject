@@ -4,6 +4,8 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Task
+from django.urls import reverse
+
 
 class TaskAPITests(APITestCase):
     username: str
@@ -39,7 +41,7 @@ class TaskAPITests(APITestCase):
         return str(refresh.access_token)
 
     def test_create_task(self) -> None:
-        url = '/api/tasks/'
+        url = reverse('task-list-create')
 
         data = {
             "title": "New Task",
@@ -54,7 +56,7 @@ class TaskAPITests(APITestCase):
         self.assertEqual(Task.objects.count(), initial_task_count + 1)
 
     def test_retrieve_task(self) -> None:
-        url = f'/api/tasks/{self.task.id}/'
+        url = reverse('task-detail', kwargs={'pk': self.task.id})
 
         response = self.client.get(url, format='json')
 
@@ -62,7 +64,7 @@ class TaskAPITests(APITestCase):
         self.assertEqual(response.data['title'], "Test Task")
 
     def test_update_task(self) -> None:
-        url = f'/api/tasks/{self.task.id}/'
+        url = reverse('task-detail', kwargs={'pk': self.task.id})
 
         data = {
             "title": "Updated Task",
@@ -77,8 +79,7 @@ class TaskAPITests(APITestCase):
         self.assertEqual(self.task.title, "Updated Task")
 
     def test_delete_task(self) -> None:
-
-        url = f'/api/tasks/{self.task.id}/'
+        url = reverse('task-detail', kwargs={'pk': self.task.id})
 
         response = self.client.delete(url, format='json')
 
