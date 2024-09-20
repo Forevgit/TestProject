@@ -6,10 +6,17 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Task
 
 class TaskAPITests(APITestCase):
+    username: str
+    password: str
+    user: User
+    token: str
+    task: Task
 
-    def setUp(self):
+    def setUpTestData(self) -> None:
+
         self.username = "testuser"
         self.password = "testpassword"
+
         if not User.objects.filter(username=self.username).exists():
             self.user = User.objects.create_user(username=self.username, password=self.password)
         else:
@@ -26,13 +33,14 @@ class TaskAPITests(APITestCase):
             priority="low"
         )
 
-    def get_jwt_token(self):
+    def get_jwt_token(self) -> str:
         refresh = RefreshToken.for_user(self.user)
 
         return str(refresh.access_token)
 
-    def test_create_task(self):
+    def test_create_task(self) -> None:
         url = '/api/tasks/'
+
         data = {
             "title": "New Task",
             "description": "New description",
@@ -45,15 +53,17 @@ class TaskAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Task.objects.count(), initial_task_count + 1)
 
-    def test_retrieve_task(self):
+    def test_retrieve_task(self) -> None:
         url = f'/api/tasks/{self.task.id}/'
+
         response = self.client.get(url, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], "Test Task")
 
-    def test_update_task(self):
+    def test_update_task(self) -> None:
         url = f'/api/tasks/{self.task.id}/'
+
         data = {
             "title": "Updated Task",
             "description": "Updated description",
@@ -66,8 +76,10 @@ class TaskAPITests(APITestCase):
         self.task.refresh_from_db()
         self.assertEqual(self.task.title, "Updated Task")
 
-    def test_delete_task(self):
+    def test_delete_task(self) -> None:
+
         url = f'/api/tasks/{self.task.id}/'
+
         response = self.client.delete(url, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

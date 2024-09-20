@@ -1,25 +1,7 @@
 from django.db import models
-from enum import Enum
-from django.utils.translation import gettext_lazy as _
+from .enum.status_enum import StatusEnum
+from .enum.priority_enum import PriorityEnum
 
-class StatusEnum(Enum):
-    NEW = 'new'
-    IN_PROGRESS = 'in_progress'
-    COMPLETED = 'completed'
-
-    @classmethod
-    def choices(cls):
-        return [(key.value, key.name.replace("_", " ").title()) for key in cls]
-
-
-class PriorityEnum(Enum):
-    LOW = 'low'
-    MEDIUM = 'medium'
-    HIGH = 'high'
-
-    @classmethod
-    def choices(cls):
-        return [(key.value, key.name.title()) for key in cls]
 
 
 class Task(models.Model):
@@ -41,5 +23,5 @@ class Task(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
