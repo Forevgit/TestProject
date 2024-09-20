@@ -13,11 +13,14 @@ from rest_framework.response import Response
 class TaskViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['status', 'priority', 'created_at']
     ordering_fields = ['created_at', 'updated_at']
+
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('status', openapi.IN_QUERY, description="Filter by task status", type=openapi.TYPE_STRING),
@@ -26,6 +29,7 @@ class TaskViewSet(viewsets.ModelViewSet):
             openapi.Parameter('ordering', openapi.IN_QUERY, description="Order by created_at or updated_at", type=openapi.TYPE_STRING),
         ]
     )
+
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
@@ -39,21 +43,25 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         response = super().retrieve(request, *args, **kwargs)
         cache.set(cache_key, response.data, timeout=60*5)
+
         return response
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
         cache.delete_pattern("task_*")
+
         return response
 
     def update(self, request, *args, **kwargs):
         response = super().update(request, *args, **kwargs)
         task_id = kwargs['pk']
         cache.delete(f"task_{task_id}")
+
         return response
 
     def destroy(self, request, *args, **kwargs):
         response = super().destroy(request, *args, **kwargs)
         task_id = kwargs['pk']
         cache.delete(f"task_{task_id}")
+
         return response
